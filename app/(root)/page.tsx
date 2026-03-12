@@ -1,14 +1,136 @@
-import { Button } from '@/components/ui/button'
+// import Link from "next/link";
+// import Image from "next/image";
+
+// import { Button } from "@/components/ui/button";
+// import InterviewCard from "@/components/InterviewCards";
+
+// import { getCurrentUser } from "@/lib/actions/auth.actions";
+// import {
+//   getInterviewsByUserId,
+//   getLatestInterviews,
+// } from "@/lib/actions/general.actions";
+
+// async function Home() {
+//   const user = await getCurrentUser();
+
+//   const [userInterviews, allInterview] = await Promise.all([
+//     getInterviewsByUserId(user?.id!),
+//     getLatestInterviews({ userId: user?.id! }),
+//   ]);
+
+//   const hasPastInterviews = userInterviews?.length! > 0;
+//   const hasUpcomingInterviews = allInterview?.length! > 0;
+
+//   return (
+//     <>
+//       <section className="card-cta">
+//         <div className="flex flex-col gap-6 max-w-lg">
+//           <h2>Get Interview-Ready with AI-Powered Practice & Feedback</h2>
+//           <p className="text-lg">
+//             Practice real interview questions & get instant feedback
+//           </p>
+
+//           <Button asChild className="btn-primary max-sm:w-full">
+//             <Link href="/interview">Start an Interview</Link>
+//           </Button>
+//         </div>
+
+//         <Image
+//           src="/robot.png"
+//           alt="robo-dude"
+//           width={400}
+//           height={400}
+//           className="max-sm:hidden"
+//         />
+//       </section>
+
+//       <section className="flex flex-col gap-6 mt-8">
+//         <h2>Your Interviews</h2>
+
+//         <div className="interviews-section">
+//           {hasPastInterviews ? (
+//             userInterviews?.map((interview) => (
+//               <InterviewCard
+//                 key={interview.id}
+//                 userId={user?.id}
+//                 interviewId={interview.id}
+//                 role={interview.role}
+//                 type={interview.type}
+//                 techstack={interview.techstack}
+//                 createdAt={interview.createdAt}
+//               />
+//             ))
+//           ) : (
+//             <p>You haven&apos;t taken any interviews yet</p>
+//           )}
+//         </div>
+//       </section>
+
+//       <section className="flex flex-col gap-6 mt-8">
+//         <h2>Take Interviews</h2>
+
+//         <div className="interviews-section">
+//           {hasUpcomingInterviews ? (
+//             allInterview?.map((interview) => (
+//               <InterviewCard
+//                 key={interview.id}
+//                 userId={user?.id}
+//                 interviewId={interview.id}
+//                 role={interview.role}
+//                 type={interview.type}
+//                 techstack={interview.techstack}
+//                 createdAt={interview.createdAt}
+//               />
+//             ))
+//           ) : (
+//             <p>There are no interviews available</p>
+//           )}
+//         </div>
+//       </section>
+//     </>
+//   );
+// }
+
+// export default Home;
+
+
+
 import Link from "next/link";
 import Image from "next/image";
-import { dummyInterviews } from '@/constants';
-import InterviewCards from '@/components/InterviewCards';
 
+import { Button } from "@/components/ui/button";
+import InterviewCard from "@/components/InterviewCards";
 
-const page = () => {
-  return(
+import { getCurrentUser } from "@/lib/actions/auth.actions";
+import {
+  getInterviewsByUserId,
+  getLatestInterviews,
+} from "@/lib/actions/general.actions";
+
+async function Home() {
+  const user = await getCurrentUser();
+
+  console.log("DEBUG USER:", user);
+
+  if (!user) {
+    console.log("❌ No user found");
+    return <p>Please login to continue</p>;
+  }
+
+  const [userInterviews, allInterview] = await Promise.all([
+    getInterviewsByUserId(user.id),
+    getLatestInterviews({ userId: user.id }),
+  ]);
+
+  console.log("DEBUG USER INTERVIEWS:", userInterviews);
+  console.log("DEBUG ALL INTERVIEWS:", allInterview);
+
+  const hasPastInterviews = userInterviews && userInterviews.length > 0;
+  const hasUpcomingInterviews = allInterview && allInterview.length > 0;
+
+  return (
     <>
-    <section className="card-cta">
+      <section className="card-cta">
         <div className="flex flex-col gap-6 max-w-lg">
           <h2>Get Interview-Ready with AI-Powered Practice & Feedback</h2>
           <p className="text-lg">
@@ -28,27 +150,63 @@ const page = () => {
           className="max-sm:hidden"
         />
       </section>
+
+      {/* YOUR INTERVIEWS */}
       <section className="flex flex-col gap-6 mt-8">
         <h2>Your Interviews</h2>
-        <div className='interviews-section'>
-          
-          {dummyInterviews.map((interview) => (
-           <InterviewCards {...interview} key={interview.id}/>
-          ))}
+
+        <div className="interviews-section">
+          {hasPastInterviews ? (
+            userInterviews.map((interview) => {
+              console.log("Rendering USER interview:", interview);
+
+              return (
+                <InterviewCard
+                  key={interview.id}
+                  userId={user.id}
+                  interviewId={interview.id}
+                  role={interview.role}
+                  type={interview.type}
+                  techstack={interview.techstack}
+                  createdAt={interview.createdAt}
+                />
+              );
+            })
+          ) : (
+            <p>You haven&apos;t taken any interviews yet</p>
+          )}
         </div>
       </section>
-      <section className='flex flex-col gap-6 mt-8'>
-      <h2>Take an Interview </h2>
-      <div className='interviews-section'> 
-      {dummyInterviews.map((interview) => (
-           <InterviewCards {...interview}  key={interview.id}/>
-          ))}
-         <p>You haven&apos;t taken any interviews yet</p>
-      </div>
+
+      {/* TAKE INTERVIEWS */}
+      <section className="flex flex-col gap-6 mt-8">
+        <h2>Take Interviews</h2>
+
+        <div className="interviews-section">
+          {hasUpcomingInterviews ? (
+            allInterview.map((interview) => {
+              console.log("Rendering AVAILABLE interview:", interview);
+
+              return (
+                <InterviewCard
+                  key={interview.id}
+                  userId={user.id}
+                  interviewId={interview.id}
+                  role={interview.role}
+                  type={interview.type}
+                  techstack={interview.techstack}
+                  createdAt={interview.createdAt}
+                />
+              );
+            })
+          ) : (
+            <p>There are no interviews available</p>
+          )}
+        </div>
       </section>
-    
     </>
-  )
+  );
 }
 
-export default page
+export default Home;
+

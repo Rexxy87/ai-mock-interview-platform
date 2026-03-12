@@ -12,10 +12,10 @@ interface FormFieldProps<T extends FieldValues> {
   control: Control<T>;
   name: Path<T>;
   label: string;
-  placeholder?: string; 
+  placeholder?: string;
   type?: "text" | "email" | "password";
 }
- 
+
 const FormField = <T extends FieldValues>({
   control,
   name,
