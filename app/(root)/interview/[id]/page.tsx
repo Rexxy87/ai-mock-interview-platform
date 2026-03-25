@@ -7,7 +7,8 @@ import { getRandomInterviewCover } from "@/lib/utils";
 import {
   getFeedbackByInterviewId,
   getInterviewById,
-} from "@/lib/actions/general.actions";
+}
+ from "@/lib/actions/general.actions";
 import { getCurrentUser } from "@/lib/actions/auth.actions";
 import DisplayTechIcons from "@/components/DisplayTechIcons";
 
